@@ -179,7 +179,7 @@ function logFallbackOnce() {
   if (warned) return;
   warned = true;
   console.warn(
-    `[Database] MySQL indisponível. Usando armazenamento local em ${DATA_FILE}`
+    `[Database] PostgreSQL indisponível. Usando armazenamento local em ${DATA_FILE}`
   );
 }
 
@@ -479,7 +479,7 @@ function writeStore(store: Store) {
  * If you ever run TWO Node processes against the same .local-data directory
  * (e.g. dev server + a script that also imports this file), wrap them with
  * an external lock or just don't do that — the recommended deployment is
- * single-process for local mode, and MySQL for multi-process.
+ * single-process for local mode, and PostgreSQL for multi-process.
  */
 function withStore<T>(mutate: (store: Store) => T): T {
   ensureDataFile();
@@ -1364,7 +1364,7 @@ export async function updateUserRole(userId: number, role: Role) {
   });
 }
 
-// A07.1 — account lockout (paridade com db.mysql.ts)
+// A07.1 — account lockout (paridade com db.postgres.ts)
 const FAILED_LOGIN_LIMIT_LOCAL = 5;
 const LOCK_WINDOW_MS_LOCAL = 15 * 60 * 1000;
 

@@ -1,5 +1,6 @@
 import { eq, asc, and, desc, inArray, like, lt, sql, or } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import {
   InsertUser,
   users,
@@ -54,6 +55,7 @@ import {
   InsertAuditLog,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
+import { getResolvedDatabaseUrl } from "./_core/databaseUrl";
 import {
   STARTER_WALLET_CREDITS,
   canReceivePlanWalletAllowance,
@@ -63,6 +65,7 @@ import {
   resolvePlanWalletAllowance,
 } from "./billingPolicy";
 
+let _client: ReturnType<typeof postgres> | null = null;
 let _db: ReturnType<typeof drizzle> | null = null;
 
 type PaginationOptions = {
@@ -105,13 +108,23 @@ function prefixLikePattern(value: string) {
   return `${escapeLikeValue(value)}%`;
 }
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
+// Lazily create the PostgreSQL client so local tooling can run without a DB.
+// Supabase's Transaction Pooler uses PgBouncer, which is incompatible with
+// prepared statements kept across transactions.
 export async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
+  if (!_db && ENV.databaseUrl) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      const databaseUrl = await getResolvedDatabaseUrl();
+      _client = postgres(databaseUrl, {
+        max: 10,
+        prepare: false,
+        connect_timeout: 10,
+      });
+      _db = drizzle(_client);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
+      if (_client) await _client.end({ timeout: 2 }).catch(() => undefined);
+      _client = null;
       _db = null;
     }
   }
@@ -168,7 +181,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
       set: updateSet,
     });
   } catch (error) {
@@ -2603,9 +2617,11 @@ export async function deleteDraft(
     eq(drafts.userId, userId),
     eq(drafts.workId, targetWorkId),
   ];
-  const result: any = await db.delete(drafts).where(and(...conditions));
-  const affected = Number(result?.affectedRows ?? result?.rowsAffected ?? 0);
-  return affected > 0;
+  const deleted = await db
+    .delete(drafts)
+    .where(and(...conditions))
+    .returning({ id: drafts.id });
+  return deleted.length > 0;
 }
 
 export async function updateChapter(
@@ -2951,7 +2967,7 @@ export async function chargeCredits(
   // wallet of 25 could both pass the check and overdraw. The conditional
   // UPDATE below either decrements the balance OR matches zero rows, in
   // which case we know the user is broke.
-  const result: any = await db
+  const charged = await db
     .update(creditWallets)
     .set({ balance: sql`${creditWallets.balance} - ${amount}` })
     .where(
@@ -2959,10 +2975,10 @@ export async function chargeCredits(
         eq(creditWallets.userId, userId),
         sql`${creditWallets.balance} >= ${amount}`
       )
-    );
+    )
+    .returning({ id: creditWallets.id });
 
-  const affected = Number(result?.affectedRows ?? result?.rowsAffected ?? 0);
-  if (!affected) {
+  if (!charged.length) {
     const current = await getCreditWallet(userId);
     throw new Error(
       `Créditos insuficientes. Necessário: ${amount}, disponível: ${current.balance}.`

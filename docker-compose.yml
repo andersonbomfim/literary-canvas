@@ -8,7 +8,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - DATABASE_URL=mysql://literary:${MYSQL_PASSWORD:-literary_secret}@db:3306/literary_canvas
+      - DATABASE_URL=postgresql://literary:${POSTGRES_PASSWORD:-literary_secret}@db:5432/literary_canvas
       - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required}
       - BUILT_IN_FORGE_API_KEY=${BUILT_IN_FORGE_API_KEY:-}
       - BUILT_IN_FORGE_API_URL=${BUILT_IN_FORGE_API_URL:-}
@@ -40,24 +40,23 @@ services:
       - app-exports:/app/.local-exports
 
   db:
-    image: mysql:8.0
+    image: postgres:16-alpine
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root_secret}
-      - MYSQL_DATABASE=literary_canvas
-      - MYSQL_USER=literary
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-literary_secret}
+      - POSTGRES_DB=literary_canvas
+      - POSTGRES_USER=literary
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-literary_secret}
     ports:
-      - "${DB_PORT:-3306}:3306"
+      - "${DB_PORT:-5432}:5432"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -U literary -d literary_canvas"]
       interval: 10s
       timeout: 5s
       retries: 5
     restart: unless-stopped
 
 volumes:
-  mysql-data:
+  postgres-data:
   app-data:
   app-exports:

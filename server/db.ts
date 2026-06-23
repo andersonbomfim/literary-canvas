@@ -1,22 +1,22 @@
 import { ENV } from "./_core/env";
-import * as mysql from "./db.mysql";
+import * as postgres from "./db.postgres";
 import * as local from "./localDb";
 
 const localPreference = process.env.LOCAL_DATA_ONLY;
 const useLocal = localPreference === "true" || !ENV.databaseUrl;
 
 /**
- * Typed proxy: picks the local or MySQL implementation at startup,
+ * Typed proxy: picks the local or PostgreSQL implementation at startup,
  * preserving the full function signature from localDb.
  */
 type LocalDb = typeof local;
 
 function pick<K extends keyof LocalDb>(name: K): LocalDb[K] {
   const localFn = local[name];
-  const mysqlFn = (mysql as Record<string, unknown>)[name];
+  const postgresFn = (postgres as Record<string, unknown>)[name];
 
-  if (!useLocal && typeof mysqlFn === "function") {
-    return mysqlFn as LocalDb[K];
+  if (!useLocal && typeof postgresFn === "function") {
+    return postgresFn as LocalDb[K];
   }
 
   if (typeof localFn !== "function") {

@@ -10,7 +10,7 @@ cd C:\CAMINHO\PARA\SEU\PROJETO
 Copy-Item .env.example .env -Force
 ```
 
-## 3) Rodar no modo local, sem depender do MySQL
+## 3) Rodar no modo local, sem depender do PostgreSQL
 Esse agora é o fluxo mais estável para desenvolvimento.
 
 ```powershell
@@ -20,18 +20,19 @@ pnpm dev
 
 O servidor abre em `http://localhost:3000`.
 
-## 4) Se você quiser usar MySQL mesmo assim
+## 4) Se você quiser usar PostgreSQL mesmo assim
 Primeiro suba o banco:
 
 ```powershell
-docker rm -f literary-mysql 2>$null
-docker run --name literary-mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=literary_canvas -p 3307:3306 -d mysql:8.0
+docker rm -f literary-postgres 2>$null
+docker run --name literary-postgres -e POSTGRES_DB=literary_canvas -e POSTGRES_USER=literary -e POSTGRES_PASSWORD=literary_secret -p 5432:5432 -d postgres:16-alpine
 ```
 
 Depois, no `.env`, troque:
 
 ```env
 LOCAL_DATA_ONLY=false
+DATABASE_URL=postgresql://literary:literary_secret@127.0.0.1:5432/literary_canvas
 ```
 
 E rode:
