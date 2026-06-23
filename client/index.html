@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Literary Canvas — Plataforma de Escrita Literária</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <script>
+      (function () {
+        try {
+          var clean = function (store) {
+            if (!store) return;
+            try {
+              var keys = [];
+              for (var i = 0; i < store.length; i += 1) {
+                var key = store.key(i);
+                if (key) keys.push(key);
+              }
+              for (var j = 0; j < keys.length; j += 1) {
+                var currentKey = keys[j];
+                var value = store.getItem(currentKey);
+                if (value == null) continue;
+                var normalized = String(value).trim();
+                if (!normalized || normalized === "undefined" || normalized === "null") {
+                  store.removeItem(currentKey);
+                }
+              }
+              store.removeItem("manus-runtime-user-info");
+            } catch (_) {}
+          };
+          clean(window.localStorage);
+          clean(window.sessionStorage);
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+
+</html>

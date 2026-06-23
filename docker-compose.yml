@@ -1,0 +1,63 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=mysql://literary:${MYSQL_PASSWORD:-literary_secret}@db:3306/literary_canvas
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required}
+      - BUILT_IN_FORGE_API_KEY=${BUILT_IN_FORGE_API_KEY:-}
+      - BUILT_IN_FORGE_API_URL=${BUILT_IN_FORGE_API_URL:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - DEEPSEEK_BASE_URL=${DEEPSEEK_BASE_URL:-}
+      - DEEPSEEK_ENABLED=${DEEPSEEK_ENABLED:-}
+      - DEEPSEEK_FREE_MODEL=${DEEPSEEK_FREE_MODEL:-}
+      - DEEPSEEK_ESSENTIAL_MODEL=${DEEPSEEK_ESSENTIAL_MODEL:-}
+      - DEEPSEEK_ULTRA_MODEL=${DEEPSEEK_ULTRA_MODEL:-}
+      - DEEPSEEK_REVIEW_MODEL=${DEEPSEEK_REVIEW_MODEL:-}
+      - DEEPSEEK_INSPIRATION_MODEL=${DEEPSEEK_INSPIRATION_MODEL:-}
+      - RUNPOD_API_KEY=${RUNPOD_API_KEY:-}
+      - RUNPOD_4090_ENDPOINT=${RUNPOD_4090_ENDPOINT:-}
+      - RUNPOD_4090_ENABLED=${RUNPOD_4090_ENABLED:-}
+      - RUNPOD_4090_DRY_RUN=${RUNPOD_4090_DRY_RUN:-}
+      - RUNPOD_4090_MODEL=${RUNPOD_4090_MODEL:-}
+      - RUNPOD_4090_ALLOWED_PLANS=${RUNPOD_4090_ALLOWED_PLANS:-}
+      - ALLOW_RUNPOD_IN_PRODUCTION=${ALLOW_RUNPOD_IN_PRODUCTION:-}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-}
+      - APP_BASE_URL=${APP_BASE_URL:-http://localhost:3000}
+      - CORS_ORIGINS=${CORS_ORIGINS:-}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - app-data:/app/.local-data
+      - app-exports:/app/.local-exports
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root_secret}
+      - MYSQL_DATABASE=literary_canvas
+      - MYSQL_USER=literary
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-literary_secret}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+  app-data:
+  app-exports:

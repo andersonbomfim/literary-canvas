@@ -1,0 +1,174 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1774917799050,
+      "tag": "0000_tired_spencer_smythe",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1774917877659,
+      "tag": "0001_whole_star_brand",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1774918428189,
+      "tag": "0002_rainy_madelyne_pryor",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1774918765400,
+      "tag": "0003_even_tigra",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1774920408666,
+      "tag": "0004_past_silver_sable",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1774921755717,
+      "tag": "0005_wise_bastion",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1774923292942,
+      "tag": "0006_mean_nightmare",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1745366400000,
+      "tag": "0007_add_indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1777154400000,
+      "tag": "0008_add_work_subtitle",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1778065200000,
+      "tag": "0009_add_book_series",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1778072400000,
+      "tag": "0010_add_series_library_entries",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1778076000000,
+      "tag": "0011_unique_email",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1778079600000,
+      "tag": "0012_account_lockout",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1778083200000,
+      "tag": "0013_audit_logs",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1778086800000,
+      "tag": "0014_generation_jobs",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "5",
+      "when": 1778090400000,
+      "tag": "0015_auxiliary_draft_usage",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "5",
+      "when": 1778094000000,
+      "tag": "0016_runpod_4090_generation",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1778097600000,
+      "tag": "0017_deepseek_generation",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1778101200000,
+      "tag": "0018_consistency_audit",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1778104800000,
+      "tag": "0019_missing_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1778108400000,
+      "tag": "0020_drop_orphan_author_style_analysis",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1778112000000,
+      "tag": "0021_narrative_improvements",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1778115600000,
+      "tag": "0022_credit_policy_cleanup",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1782115200000,
+      "tag": "0023_review_writing_flow",
+      "breakpoints": true
+    }
+  ]
+}
